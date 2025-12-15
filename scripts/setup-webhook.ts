@@ -3,25 +3,45 @@ import TelegramBot from "node-telegram-bot-api";
 // This script sets up the webhook URL with Telegram
 // Run it once after deploying to Vercel
 
-const token = process.env.MOTUMBITO_BOT_TOKEN;
-const webhookUrl = process.argv[2];
+const botName = process.argv[2];
+const webhookUrl = process.argv[3];
 
-if (!token) {
-  console.error("Error: MOTUMBITO_BOT_TOKEN environment variable not set");
+if (!botName) {
+  console.error("Error: Please provide bot name as first argument");
+  console.error("Usage: npm run setup-webhook <bot-name> <webhook-url>");
+  console.error(
+    "Example: npm run setup-webhook motumbito https://your-app.vercel.app/api/motumbito",
+  );
   process.exit(1);
 }
 
 if (!webhookUrl) {
-  console.error("Error: Please provide webhook URL as argument");
-  console.error("Usage: npm run setup-webhook https://your-app.vercel.app/api/webhook");
+  console.error("Error: Please provide webhook URL as second argument");
+  console.error("Usage: npm run setup-webhook <bot-name> <webhook-url>");
+  console.error(
+    "Example: npm run setup-webhook motumbito https://your-app.vercel.app/api/motumbito",
+  );
+  process.exit(1);
+}
+
+// Convert bot name to env variable format (e.g., "motumbito" -> "MOTUMBITO_BOT_TOKEN")
+const envVarName = `${botName.toUpperCase().replace(/-/g, "_")}_BOT_TOKEN`;
+const token = process.env[envVarName];
+
+if (!token) {
+  console.error(`Error: ${envVarName} environment variable not set`);
+  console.error(`Make sure you have ${envVarName} in your .env file`);
   process.exit(1);
 }
 
 const bot = new TelegramBot(token);
 
-console.log(`Setting webhook to: ${webhookUrl}`);
+console.log(`Setting up webhook for bot: ${botName}`);
+console.log(`Using env variable: ${envVarName}`);
+console.log(`Webhook URL: ${webhookUrl}`);
 
-bot.setWebHook(webhookUrl)
+bot
+  .setWebHook(webhookUrl)
   .then(() => {
     console.log("✅ Webhook set successfully!");
     return bot.getWebHookInfo();
