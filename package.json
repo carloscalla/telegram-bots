@@ -4,7 +4,8 @@
   "description": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "nodemon": "nodemon --env-file=.env",
+    "nodemon": "nodemon",
+    "nodemon-with-env": "nodemon --env-file=.env",
     "motumbito-bot": "nodemon motumbito-bot.js"
   },
   "repository": {
