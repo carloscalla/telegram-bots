@@ -61,16 +61,37 @@ bot.onText(/\/commands/, function onCommandsText(msg: Message) {
 });
 
 bot.onText(/\/bendiceme/, function onBendicemeText(msg: Message) {
+  // console.log(
+  //   "bendiceme: " +
+  //     msg +
+  //     "\n" +
+  //     "sender: " +
+  //     msg.from.first_name +
+  //     "\n" +
+  //     "id: " +
+  //     msg.from.id,
+  // );
+
+  // if (msg.from.id === 270338121) {
+  //   bot.sendMessage(msg.chat.id, "Ocs man");
+  // } else {
   bot.sendMessage(
     msg.chat.id,
     t(bendiciones[getRnd(bendiciones.length)], {
       user: msg.from?.first_name || "amigo",
     }),
   );
+  // }
 
   if (msg.from?.id === 151854604) {
     bot.sendMessage(msg.chat.id, "Papirrin");
   }
+  // if (msg.from.id === 302305136) {
+  //   bot.sendMessage(
+  //     msg.chat.id,
+  //     "Y por si acaso, sí tienes dejo campeón ( ͡° ͜ʖ ͡°)",
+  //   );
+  // }
 });
 
 console.log("🤖 Motumbito bot is running in polling mode...");
