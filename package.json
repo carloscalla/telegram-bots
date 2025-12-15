@@ -4,8 +4,8 @@
   "description": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "tsx --env-file=.env --watch motumbito-bot.ts",
-    "setup-webhook": "tsx scripts/setup-webhook.ts",
+    "dev:motumbito": "tsx --env-file=.env --watch bots/motumbito/polling.ts",
+    "setup-webhook": "tsx --env-file=.env scripts/setup-webhook.ts",
     "deploy": "vercel --prod",
     "type-check": "tsc --noEmit"
   },

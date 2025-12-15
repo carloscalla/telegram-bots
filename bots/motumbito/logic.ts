@@ -1,7 +1,7 @@
 import TelegramBot, { Message } from "node-telegram-bot-api";
-import type { VercelRequest, VercelResponse } from "@vercel/node";
 
-const bendiciones: string[] = [
+// Bot data
+export const bendiciones: string[] = [
   "Te bendigo {user}, en el nombre del tío Motumbito.",
   "Motumbito no está de humor para bendecirte ahora {user}, tendrás que esperar.",
   "{user}, no eres digno de la bendición de Motumbito.",
@@ -25,6 +25,7 @@ const bendiciones: string[] = [
   "Una más y me cacho a tu vieja mano ya estas avisado.",
 ];
 
+// Helper functions
 function t(s: string, d: Record<string, string>): string {
   for (let p in d) {
     s = s.replace(new RegExp("{" + p + "}", "g"), d[p]);
@@ -36,59 +37,33 @@ function getRnd(max: number): number {
   return Math.floor(Math.random() * max);
 }
 
-// Create bot instance WITHOUT polling
-const bot = new TelegramBot(process.env.MOTUMBITO_BOT_TOKEN!);
-
-// Process different commands
-async function processMessage(msg: Message): Promise<void> {
+// Main bot logic - works for both polling and webhook modes
+export async function processMessage(
+  bot: TelegramBot,
+  msg: Message
+): Promise<void> {
   const text = msg.text || "";
 
   if (text === "/start" || text === "/help") {
     await bot.sendMessage(
       msg.chat.id,
-      "Este es el bot del tio Motumbito, su único comando es /bendiceme",
+      "Este es el bot del tio Motumbito, su único comando es /bendiceme"
     );
   } else if (text === "/commands") {
     await bot.sendMessage(
       msg.chat.id,
-      "Solo hay un comando:\n\n/bendiceme - si tienes suerte, recibirás la bendición del tio Motumbito.",
+      "Solo hay un comando:\n\n/bendiceme - si tienes suerte, recibirás la bendición del tio Motumbito."
     );
   } else if (text === "/bendiceme") {
     await bot.sendMessage(
       msg.chat.id,
       t(bendiciones[getRnd(bendiciones.length)], {
         user: msg.from?.first_name || "amigo",
-      }),
+      })
     );
 
     if (msg.from?.id === 151854604) {
       await bot.sendMessage(msg.chat.id, "Papirrin");
     }
-  }
-}
-
-// Vercel serverless function handler
-export default async function handler(
-  req: VercelRequest,
-  res: VercelResponse,
-): Promise<void> {
-  if (req.method === "POST") {
-    try {
-      const update = req.body;
-
-      // Process the message if it exists
-      if (update.message) {
-        await processMessage(update.message);
-      }
-
-      // Respond to Telegram that we received the update
-      res.status(200).json({ ok: true });
-    } catch (error) {
-      console.error("Error processing update:", error);
-      res.status(500).json({ error: "Internal server error" });
-    }
-  } else {
-    // Handle GET requests (for testing)
-    res.status(200).json({ status: "Motumbito bot is running!" });
   }
 }
