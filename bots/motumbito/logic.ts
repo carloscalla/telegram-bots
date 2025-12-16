@@ -37,6 +37,11 @@ function getRnd(max: number): number {
   return Math.floor(Math.random() * max);
 }
 
+// Helper to check if text matches a command (handles both /cmd and /cmd@motumbito_bot formats)
+function isCommand(text: string, command: string): boolean {
+  return text === command || text === `${command}@motumbito_bot`;
+}
+
 // Main bot logic - works for both polling and webhook modes
 export async function processMessage(
   bot: TelegramBot,
@@ -44,17 +49,17 @@ export async function processMessage(
 ): Promise<void> {
   const text = msg.text || "";
 
-  if (text === "/start" || text === "/help") {
+  if (isCommand(text, "/start") || isCommand(text, "/help")) {
     await bot.sendMessage(
       msg.chat.id,
       "Este es el bot del tio Motumbito, su único comando es /bendiceme",
     );
-  } else if (text === "/commands") {
+  } else if (isCommand(text, "/commands")) {
     await bot.sendMessage(
       msg.chat.id,
       "Solo hay un comando:\n\n/bendiceme - si tienes suerte, recibirás la bendición del tio Motumbito.",
     );
-  } else if (text === "/bendiceme") {
+  } else if (isCommand(text, "/bendiceme")) {
     await bot.sendMessage(
       msg.chat.id,
       t(bendiciones[getRnd(bendiciones.length)], {
