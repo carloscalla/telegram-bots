@@ -1,3 +1,4 @@
+// Legacy file. For info purposes only. Not in use anymore by the current bot.
 import TelegramBot, { Message } from "node-telegram-bot-api";
 
 const bendiciones: string[] = [
