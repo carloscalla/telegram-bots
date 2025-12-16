@@ -40,26 +40,26 @@ function getRnd(max: number): number {
 // Main bot logic - works for both polling and webhook modes
 export async function processMessage(
   bot: TelegramBot,
-  msg: Message
+  msg: Message,
 ): Promise<void> {
   const text = msg.text || "";
 
   if (text === "/start" || text === "/help") {
     await bot.sendMessage(
       msg.chat.id,
-      "Este es el bot del tio Motumbito, su único comando es /bendiceme"
+      "Este es el bot del tio Motumbito, su único comando es /bendiceme",
     );
   } else if (text === "/commands") {
     await bot.sendMessage(
       msg.chat.id,
-      "Solo hay un comando:\n\n/bendiceme - si tienes suerte, recibirás la bendición del tio Motumbito."
+      "Solo hay un comando:\n\n/bendiceme - si tienes suerte, recibirás la bendición del tio Motumbito.",
     );
   } else if (text === "/bendiceme") {
     await bot.sendMessage(
       msg.chat.id,
       t(bendiciones[getRnd(bendiciones.length)], {
         user: msg.from?.first_name || "amigo",
-      })
+      }),
     );
 
     if (msg.from?.id === 151854604) {
