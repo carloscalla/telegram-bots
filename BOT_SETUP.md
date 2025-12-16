@@ -46,22 +46,9 @@ export async function processMessage(
 }
 ```
 
-### 3. Create `bots/your-bot-name/polling.ts`
+### 3. ~~Create polling.ts~~ **SKIP - Now Automatic!** ✨
 
-```typescript
-import TelegramBot from "node-telegram-bot-api";
-import { processMessage } from "./logic.js";
-
-const bot = new TelegramBot(process.env.YOUR_BOT_NAME_BOT_TOKEN!, {
-  polling: true,
-});
-
-bot.on("message", async (msg) => {
-  await processMessage(bot, msg);
-});
-
-console.log("🤖 Your Bot is running in polling mode...");
-```
+**No need to create a `polling.ts` file!** The generic `scripts/start-polling.ts` handles it automatically.
 
 ### 4. Create `api/your-bot-name.ts`
 
@@ -111,11 +98,13 @@ YOUR_BOT_NAME_BOT_TOKEN=your_token_here
 ```json
 {
   "scripts": {
-    "dev:your-bot-name": "tsx --env-file=.env --watch bots/your-bot-name/polling.ts",
+    "dev:your-bot-name": "npm run dev your-bot-name",
     "setup-webhook:your-bot-name": "npm run setup-webhook your-bot-name"
   }
 }
 ```
+
+**Note:** The generic `npm run dev <bot-name>` script automatically handles polling for any bot!
 
 ### 7. Test and deploy
 

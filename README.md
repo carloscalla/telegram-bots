@@ -22,9 +22,9 @@ telegram-bots/
 │   └── motumbito.ts
 ├── bots/                     # Bot logic
 │   └── motumbito/
-│       ├── logic.ts          # Shared bot logic
-│       └── polling.ts        # Local development (polling mode)
+│       └── logic.ts          # Shared bot logic (used by both polling & webhook)
 ├── scripts/
+│   ├── start-polling.ts      # Generic polling script (works for all bots)
 │   └── setup-webhook.ts      # Webhook setup utility
 └── package.json
 ```
