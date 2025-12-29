@@ -10,25 +10,16 @@ telegram-bots/
 │   ├── motumbito.ts          # Bot 1 webhook endpoint
 │   └── another-bot.ts         # Bot 2 webhook endpoint
 ├── bots/
-│   ├── motumbito/
-│   │   ├── logic.ts           # Shared bot logic
-│   │   └── polling.ts         # Local dev (polling mode)
-│   └── another-bot/
-│       ├── logic.ts
-│       └── polling.ts
+│   ├── motumbito.ts           # Bot 1 logic
+│   └── another-bot.ts         # Bot 2 logic
 └── scripts/
+    ├── start-polling.ts       # Generic polling (works for all bots)
     └── setup-webhook.ts       # Flexible webhook setup
 ```
 
 ## Adding a New Bot
 
-### 1. Create bot directory structure
-
-```bash
-mkdir -p bots/your-bot-name
-```
-
-### 2. Create `bots/your-bot-name/logic.ts`
+### 1. Create `bots/your-bot-name.ts`
 
 ```typescript
 import TelegramBot, { Message } from "node-telegram-bot-api";
@@ -46,16 +37,12 @@ export async function processMessage(
 }
 ```
 
-### 3. ~~Create polling.ts~~ **SKIP - Now Automatic!** ✨
-
-**No need to create a `polling.ts` file!** The generic `scripts/start-polling.ts` handles it automatically.
-
-### 4. Create `api/your-bot-name.ts`
+### 2. Create `api/your-bot-name.ts`
 
 ```typescript
 import TelegramBot from "node-telegram-bot-api";
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { processMessage } from "../bots/your-bot-name/logic.js";
+import { processMessage } from "../bots/your-bot-name.js";
 
 const bot = new TelegramBot(process.env.YOUR_BOT_NAME_BOT_TOKEN!);
 

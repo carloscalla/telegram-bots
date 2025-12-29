@@ -1,6 +1,6 @@
 import TelegramBot from "node-telegram-bot-api";
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { processMessage } from "../bots/motumbito/logic.js";
+import { processMessage } from "../bots/motumbito.js";
 
 // Create bot instance WITHOUT polling (for webhook mode)
 const bot = new TelegramBot(process.env.MOTUMBITO_BOT_TOKEN!);

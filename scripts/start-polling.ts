@@ -27,7 +27,7 @@ if (!token) {
 }
 
 // Dynamically import the bot logic
-const logicPath = resolve(process.cwd(), `bots/${botName}/logic.js`);
+const logicPath = resolve(process.cwd(), `bots/${botName}.js`);
 
 (async () => {
   try {
@@ -44,7 +44,7 @@ const logicPath = resolve(process.cwd(), `bots/${botName}/logic.js`);
     });
 
     console.log(`🤖 ${botName} bot is running in polling mode (local dev)...`);
-    console.log(`📍 Logic file: bots/${botName}/logic.ts`);
+    console.log(`📍 Logic file: bots/${botName}.ts`);
     console.log(`🔑 Token env var: ${envVarName}`);
   } catch (error) {
     console.error(`Failed to load bot logic from: ${logicPath}`);

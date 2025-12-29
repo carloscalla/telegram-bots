@@ -21,8 +21,7 @@ telegram-bots/
 ├── api/                      # Vercel serverless functions (webhooks)
 │   └── motumbito.ts
 ├── bots/                     # Bot logic
-│   └── motumbito/
-│       └── logic.ts          # Shared bot logic (used by both polling & webhook)
+│   └── motumbito.ts          # Shared bot logic (used by both polling & webhook)
 ├── scripts/
 │   ├── start-polling.ts      # Generic polling script (works for all bots)
 │   └── setup-webhook.ts      # Webhook setup utility
@@ -72,11 +71,10 @@ See [BOT_SETUP.md](BOT_SETUP.md) for detailed instructions.
 
 Quick overview:
 
-1. Create `bots/your-bot/logic.ts` (shared logic)
-2. Create `bots/your-bot/polling.ts` (local dev)
-3. Create `api/your-bot.ts` (webhook)
-4. Add scripts to `package.json`
-5. Add `YOUR_BOT_BOT_TOKEN` to environment variables
+1. Create `bots/your-bot.ts` (shared logic)
+2. Create `api/your-bot.ts` (webhook)
+3. Add scripts to `package.json`
+4. Add `YOUR_BOT_BOT_TOKEN` to environment variables
 
 ## License
 
