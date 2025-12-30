@@ -1,0 +1,202 @@
+import TelegramBot, { Message } from "node-telegram-bot-api";
+
+// API Response type for a single currency rate
+interface CurrencyRate {
+  code: string;
+  codein: string;
+  name: string;
+  high: string;
+  low: string;
+  varBid: string;
+  pctChange: string;
+  bid: string;
+  ask: string;
+  timestamp: string;
+  create_date: string;
+}
+
+// API Response can have multiple currencies
+interface ExchangeRateResponse {
+  USDPEN?: CurrencyRate;
+  EURPEN?: CurrencyRate;
+}
+
+function isCommand(text: string, command: string): boolean {
+  return text === command || text === `${command}@tipodecambio_bot`;
+}
+
+// Type guard to validate API response
+function isValidExchangeRateResponse(
+  data: unknown,
+): data is ExchangeRateResponse {
+  if (typeof data !== "object" || data === null) {
+    return false;
+  }
+
+  const response = data as Record<string, unknown>;
+
+  // Helper to check if a value is a valid CurrencyRate
+  const isValidRate = (rate: unknown): rate is CurrencyRate => {
+    if (typeof rate !== "object" || rate === null) return false;
+    const r = rate as Record<string, unknown>;
+    return (
+      typeof r.bid === "string" &&
+      typeof r.ask === "string" &&
+      typeof r.timestamp === "string"
+    );
+  };
+
+  // At least one of USD or EUR must be present and valid
+  return (
+    (response.USDPEN !== undefined && isValidRate(response.USDPEN)) ||
+    (response.EURPEN !== undefined && isValidRate(response.EURPEN))
+  );
+}
+
+// Helper to truncate to 3 decimals (no rounding)
+function truncate3(value: number): string {
+  return (Math.floor(value * 1000) / 1000).toFixed(3);
+}
+
+// Helper to format a single currency rate
+function formatRate(
+  rate: CurrencyRate,
+  symbol: string,
+  name: string,
+  amount?: number,
+): string {
+  const bid = parseFloat(rate.bid);
+  const ask = parseFloat(rate.ask);
+  const prom = (bid + ask) / 2;
+
+  let message = `
+${symbol} *${name} → PEN*
+
+Compra: S/ ${truncate3(bid)}
+Venta: S/ ${truncate3(ask)}
+Promedio: S/ ${truncate3(prom)}`;
+
+  // Add conversion if amount is provided
+  if (amount !== undefined && amount > 0) {
+    const converted = amount * prom;
+    message += `
+
+💰 *Conversión:*
+${amount} ${name} = S/ ${truncate3(converted)}`;
+  }
+
+  // Format date with multiple timezones for clarity
+  const date = new Date(parseInt(rate.timestamp) * 1000);
+  const peruvianTime = date.toLocaleString("es-PE", {
+    timeZone: "America/Lima",
+  });
+  const brazilianTime = date.toLocaleString("es-BR", {
+    timeZone: "America/Sao_Paulo",
+  });
+
+  message += `
+
+📅 *Actualizado:*
+🇵🇪 ${peruvianTime} (Perú)
+🇧🇷 ${brazilianTime} (Brasil - API)`;
+
+  return message.trim();
+}
+
+// Fetch exchange rate from API using native fetch
+async function getExchangeRate(
+  currencies: string[],
+  amount?: number,
+): Promise<string> {
+  try {
+    const response = await fetch(
+      `https://economia.awesomeapi.com.br/last/${currencies.join(",")}`,
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data: unknown = await response.json();
+
+    // Validate response structure
+    if (!isValidExchangeRateResponse(data)) {
+      throw new Error("Invalid API response structure");
+    }
+
+    const messages: string[] = [];
+
+    // Format USD if present
+    if (data.USDPEN) {
+      messages.push(formatRate(data.USDPEN, "💵", "USD", amount));
+    }
+
+    // Format EUR if present
+    if (data.EURPEN) {
+      messages.push(formatRate(data.EURPEN, "💶", "EUR", amount));
+    }
+
+    if (messages.length === 0) {
+      return "❌ No se encontraron tasas de cambio.";
+    }
+
+    return messages.join("\n\n━━━━━━━━━━━━━━━━\n\n");
+  } catch (error) {
+    console.error("Error fetching exchange rate:", error);
+    return "❌ Error al obtener el tipo de cambio. Intenta de nuevo más tarde.";
+  }
+}
+
+export async function processMessage(
+  bot: TelegramBot,
+  msg: Message,
+): Promise<void> {
+  const text = msg.text || "";
+
+  try {
+    if (isCommand(text, "/start") || isCommand(text, "/help")) {
+      await bot.sendMessage(
+        msg.chat.id,
+        "🏦 *Bot de Tipo de Cambio*\n\nComandos disponibles:\n\n/usd [cantidad] - USD → PEN\n/eur [cantidad] - EUR → PEN\n/all [cantidad] - USD y EUR → PEN\n\n*Ejemplos:*\n/usd - Ver tipo de cambio\n/usd 5 - Convertir 5 USD a PEN",
+        { parse_mode: "Markdown" },
+      );
+    } else if (text.startsWith("/usd")) {
+      // Extract amount if provided: /usd 5 or /usd@botname 5
+      const match = text.match(/^\/usd(?:@\w+)?\s+(\d+(?:\.\d+)?)/);
+      const amount = match ? parseFloat(match[1]) : undefined;
+
+      const rateMessage = await getExchangeRate(["USD-PEN"], amount);
+      await bot.sendMessage(msg.chat.id, rateMessage, {
+        parse_mode: "Markdown",
+      });
+    } else if (text.startsWith("/eur")) {
+      // Extract amount if provided
+      const match = text.match(/^\/eur(?:@\w+)?\s+(\d+(?:\.\d+)?)/);
+      const amount = match ? parseFloat(match[1]) : undefined;
+
+      const rateMessage = await getExchangeRate(["EUR-PEN"], amount);
+      await bot.sendMessage(msg.chat.id, rateMessage, {
+        parse_mode: "Markdown",
+      });
+    } else if (text.startsWith("/all")) {
+      // Extract amount if provided
+      const match = text.match(/^\/all(?:@\w+)?\s+(\d+(?:\.\d+)?)/);
+      const amount = match ? parseFloat(match[1]) : undefined;
+
+      const rateMessage = await getExchangeRate(["USD-PEN", "EUR-PEN"], amount);
+      await bot.sendMessage(msg.chat.id, rateMessage, {
+        parse_mode: "Markdown",
+      });
+    }
+  } catch (error) {
+    // Try to send error message to user
+    try {
+      await bot.sendMessage(
+        msg.chat.id,
+        "❌ Ocurrió un error al procesar tu mensaje. Por favor intenta de nuevo.",
+      );
+    } catch (sendError) {
+      console.error("Could not send error message:", sendError);
+    }
+  }
+}

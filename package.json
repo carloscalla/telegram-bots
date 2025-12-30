@@ -6,8 +6,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsx --env-file=.env --watch scripts/start-polling.ts",
     "dev:motumbito": "npm run dev motumbito",
+    "dev:tipodecambio": "npm run dev tipodecambio",
     "setup-webhook": "tsx --env-file=.env scripts/setup-webhook.ts",
     "setup-webhook:motumbito": "npm run setup-webhook motumbito",
+    "setup-webhook:tipodecambio": "npm run setup-webhook tipodecambio",
     "deploy": "vercel --prod",
     "type-check": "tsc --noEmit"
   },
