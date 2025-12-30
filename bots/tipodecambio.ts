@@ -99,15 +99,11 @@ ${amount} ${name} = S/ ${truncate3(converted)}`;
   const peruvianTime = date.toLocaleString("es-PE", {
     timeZone: "America/Lima",
   });
-  const brazilianTime = date.toLocaleString("es-BR", {
-    timeZone: "America/Sao_Paulo",
-  });
 
   message += `
 
 📅 *Actualizado:*
-🇵🇪 ${peruvianTime} (Perú)
-🇧🇷 ${brazilianTime} (Brasil - API)`;
+🇵🇪 ${peruvianTime} (Perú)`;
 
   return message.trim();
 }
