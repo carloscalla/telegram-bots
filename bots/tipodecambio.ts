@@ -148,7 +148,7 @@ async function getExchangeRate(
 
   try {
     const response = await fetch(
-      `https://economia.awesomeapi.com.br/json/last/${currencies.join(",")}`,
+      `https://economia.awesomeapi.com.br/json/last/${currencies.join(",")}?token=${process.env.AWESOMEAPI_KEY}`,
       {
         headers: {
           "User-Agent":
