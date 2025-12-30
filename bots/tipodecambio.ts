@@ -21,6 +21,15 @@ interface ExchangeRateResponse {
   EURPEN?: CurrencyRate;
 }
 
+// Simple in-memory cache
+interface CacheEntry {
+  data: ExchangeRateResponse;
+  timestamp: number;
+}
+
+const cache = new Map<string, CacheEntry>();
+const CACHE_TTL_MS = 3 * 60 * 1000; // 3 minutes
+
 function isCommand(text: string, command: string): boolean {
   return text === command || text === `${command}@tipodecambio_bot`;
 }
@@ -108,6 +117,35 @@ async function getExchangeRate(
   currencies: string[],
   amount?: number,
 ): Promise<string> {
+  // Create cache key based only on currencies (not amount, since API call is the same)
+  const cacheKey = currencies.join(",");
+
+  // Check if we have a valid cached response
+  const cachedEntry = cache.get(cacheKey);
+  if (cachedEntry) {
+    const age = Date.now() - cachedEntry.timestamp;
+    if (age < CACHE_TTL_MS) {
+      console.log(
+        `Cache hit for ${cacheKey} (age: ${Math.round(age / 1000)}s)`,
+      );
+      // Use cached data and format with current amount
+      const data = cachedEntry.data;
+      const messages: string[] = [];
+
+      if (data.USDPEN) {
+        messages.push(formatRate(data.USDPEN, "💵", "USD", amount));
+      }
+      if (data.EURPEN) {
+        messages.push(formatRate(data.EURPEN, "💶", "EUR", amount));
+      }
+
+      return messages.join("\n\n━━━━━━━━━━━━━━━━\n\n");
+    } else {
+      // Cache expired, remove it
+      cache.delete(cacheKey);
+    }
+  }
+
   try {
     const response = await fetch(
       `https://economia.awesomeapi.com.br/last/${currencies.join(",")}`,
@@ -142,6 +180,12 @@ async function getExchangeRate(
     if (messages.length === 0) {
       return "❌ No se encontraron tasas de cambio.";
     }
+
+    // Store raw API data in cache (before formatting)
+    cache.set(cacheKey, {
+      data: data,
+      timestamp: Date.now(),
+    });
 
     return messages.join("\n\n━━━━━━━━━━━━━━━━\n\n");
   } catch (error) {
