@@ -149,28 +149,21 @@ async function getExchangeRate(
   try {
     const response = await fetch(
       `https://economia.awesomeapi.com.br/json/last/${currencies.join(",")}`,
+      {
+        headers: {
+          "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+          Accept: "application/json, text/plain, */*",
+          "Accept-Language": "es-PE,es;q=0.9,en;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br",
+          Referer: "https://economia.awesomeapi.com.br/",
+          Origin: "https://economia.awesomeapi.com.br",
+        },
+      },
     );
 
     if (!response.ok) {
       if (response.status === 429) {
-        // Check for Retry-After header (common rate limit header)
-        const retryAfter = response.headers.get("Retry-After");
-        const rateLimitReset = response.headers.get("X-RateLimit-Reset");
-
-        console.log("Rate limit headers:", {
-          retryAfter,
-          rateLimitReset,
-          allHeaders: Object.fromEntries(response.headers.entries()),
-        });
-
-        if (retryAfter) {
-          // Retry-After can be in seconds or HTTP date
-          const seconds = parseInt(retryAfter);
-          if (!isNaN(seconds)) {
-            return `⏱️ Demasiadas solicitudes. Por favor espera ${seconds} segundos e intenta de nuevo.`;
-          }
-        }
-
         return "⏱️ Demasiadas solicitudes. Por favor espera un momento e intenta de nuevo.";
       }
       throw new Error(`HTTP error! status: ${response.status}`);
