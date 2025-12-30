@@ -114,6 +114,9 @@ async function getExchangeRate(
     );
 
     if (!response.ok) {
+      if (response.status === 429) {
+        return "⏱️ Demasiadas solicitudes. Por favor espera un momento e intenta de nuevo.";
+      }
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
