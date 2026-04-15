@@ -86,12 +86,33 @@ YOUR_BOT_NAME_BOT_TOKEN=your_token_here
 {
   "scripts": {
     "dev:your-bot-name": "npm run dev your-bot-name",
-    "setup-webhook:your-bot-name": "npm run setup-webhook your-bot-name"
+    "setup-webhook:your-bot-name": "npm run setup-webhook your-bot-name",
+    "setup-commands:your-bot-name": "npm run setup-commands your-bot-name"
   }
 }
 ```
 
 **Note:** The generic `npm run dev <bot-name>` script automatically handles polling for any bot!
+
+### 6b. Register bot commands in the Telegram app
+
+Add your bot's commands to `scripts/setup-commands.ts` under `BOT_COMMANDS`:
+
+```typescript
+"your-bot-name": [
+  { command: "start", description: "Start the bot" },
+  { command: "help", description: "Show help" },
+  // ... your commands
+],
+```
+
+Then run it once to register them with Telegram:
+
+```bash
+npm run setup-commands:your-bot-name
+```
+
+This makes commands appear in the Telegram command menu (the `/` suggestions UI). Only needs to be re-run if commands change.
 
 ### 7. Test and deploy
 
@@ -149,7 +170,7 @@ npm run setup-webhook another-bot https://your-app.vercel.app/api/another-bot
 Bot names are automatically converted to env variable names:
 
 - `motumbito` → `MOTUMBITO_BOT_TOKEN`
-- `another-bot` → `ANOTHER_BOT_TOKEN`
+- `another` → `ANOTHER_BOT_TOKEN`
 - `my-cool-bot` → `MY_COOL_BOT_TOKEN`
 
 ## Key Benefits

@@ -19,12 +19,14 @@ Multi-bot Telegram bot repository deployed on Vercel using webhooks.
 ```
 telegram-bots/
 ├── api/                      # Vercel serverless functions (webhooks)
-│   └── motumbito.ts
+│   └── {bot-name}.ts
 ├── bots/                     # Bot logic
-│   └── motumbito.ts          # Shared bot logic (used by both polling & webhook)
+│   └── {bot-name}.ts         # Shared bot logic (used by both polling & webhook)
 ├── scripts/
 │   ├── start-polling.ts      # Generic polling script (works for all bots)
-│   └── setup-webhook.ts      # Webhook setup utility
+│   ├── setup-webhook.ts      # Webhook setup utility
+│   ├── setup-commands.ts     # Telegram command menu registration
+│   └── utils.ts              # Shared script utilities
 └── package.json
 ```
 
@@ -35,6 +37,10 @@ telegram-bots/
 ```bash
 # Install dependencies
 npm install
+
+# Set up environment variables
+cp .env.example .env
+# Edit .env and fill in your bot tokens
 
 # Run bot locally (polling mode)
 npm run dev:motumbito
@@ -61,6 +67,7 @@ npm run dev:motumbito
 ```bash
 npm run dev:motumbito              # Run Motumbito bot locally
 npm run setup-webhook:motumbito    # Setup Motumbito webhook
+npm run setup-commands:motumbito   # Register Motumbito commands in Telegram UI
 npm run type-check                 # Check TypeScript types
 npm run deploy                     # Deploy to Vercel (CLI)
 ```
@@ -74,7 +81,8 @@ Quick overview:
 1. Create `bots/your-bot.ts` (shared logic)
 2. Create `api/your-bot.ts` (webhook)
 3. Add scripts to `package.json`
-4. Add `YOUR_BOT_BOT_TOKEN` to environment variables
+4. Add `YOUR_BOT_TOKEN` to environment variables
+5. Register commands via `npm run setup-commands:your-bot`
 
 ## License
 
