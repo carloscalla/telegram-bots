@@ -10,6 +10,9 @@
     "setup-webhook": "tsx --env-file=.env scripts/setup-webhook.ts",
     "setup-webhook:motumbito": "npm run setup-webhook motumbito",
     "setup-webhook:tipodecambio": "npm run setup-webhook tipodecambio",
+    "setup-commands": "tsx --env-file=.env scripts/setup-commands.ts",
+    "setup-commands:motumbito": "npm run setup-commands motumbito",
+    "setup-commands:tipodecambio": "npm run setup-commands tipodecambio",
     "deploy": "vercel --prod",
     "type-check": "tsc --noEmit"
   },

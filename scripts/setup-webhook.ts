@@ -1,4 +1,5 @@
 import TelegramBot from "node-telegram-bot-api";
+import { getBotTokenEnvVar } from "./utils.js";
 
 // This script sets up the webhook URL with Telegram
 // Run it once after deploying to Vercel
@@ -24,8 +25,7 @@ if (!webhookUrl) {
   process.exit(1);
 }
 
-// Convert bot name to env variable format (e.g., "motumbito" -> "MOTUMBITO_BOT_TOKEN")
-const envVarName = `${botName.toUpperCase().replace(/-/g, "_")}_BOT_TOKEN`;
+const envVarName = getBotTokenEnvVar(botName);
 const token = process.env[envVarName];
 
 if (!token) {

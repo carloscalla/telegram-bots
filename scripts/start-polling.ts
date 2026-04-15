@@ -1,5 +1,6 @@
 import TelegramBot from "node-telegram-bot-api";
 import { resolve } from "path";
+import { getBotTokenEnvVar } from "./utils.js";
 
 /**
  * Generic polling bot starter
@@ -11,13 +12,16 @@ const botName = process.argv[2];
 
 if (!botName) {
   console.error("Error: Please provide bot name as argument");
-  console.error("Usage: tsx --env-file=.env scripts/start-polling.ts <bot-name>");
-  console.error("Example: tsx --env-file=.env scripts/start-polling.ts motumbito");
+  console.error(
+    "Usage: tsx --env-file=.env scripts/start-polling.ts <bot-name>",
+  );
+  console.error(
+    "Example: tsx --env-file=.env scripts/start-polling.ts motumbito",
+  );
   process.exit(1);
 }
 
-// Convert bot name to env variable format (e.g., "motumbito" -> "MOTUMBITO_BOT_TOKEN")
-const envVarName = `${botName.toUpperCase().replace(/-/g, "_")}_BOT_TOKEN`;
+const envVarName = getBotTokenEnvVar(botName);
 const token = process.env[envVarName];
 
 if (!token) {
