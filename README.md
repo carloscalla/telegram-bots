@@ -50,12 +50,12 @@ npm run dev:motumbito
 
 1. Connect your GitHub repo to Vercel
 2. Add environment variable in Vercel Dashboard:
-   - `MOTUMBITO_BOT_TOKEN` = your bot token
+    - `MOTUMBITO_BOT_TOKEN` = your bot token
 3. Deploy (automatic on git push)
 4. Set up webhook:
-   ```bash
-   npm run setup-webhook:motumbito https://your-app.vercel.app/api/motumbito
-   ```
+    ```bash
+    npm run setup-webhook:motumbito https://your-app.vercel.app/api/motumbito
+    ```
 
 ## Documentation
 

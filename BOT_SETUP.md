@@ -22,48 +22,42 @@ telegram-bots/
 ### 1. Create `bots/your-bot-name.ts`
 
 ```typescript
-import TelegramBot, { Message } from "node-telegram-bot-api";
+import TelegramBot, {Message} from 'node-telegram-bot-api'
 
-export async function processMessage(
-  bot: TelegramBot,
-  msg: Message,
-): Promise<void> {
-  const text = msg.text || "";
+export async function processMessage(bot: TelegramBot, msg: Message): Promise<void> {
+    const text = msg.text || ''
 
-  if (text === "/start") {
-    await bot.sendMessage(msg.chat.id, "Hello!");
-  }
-  // ... your bot logic
+    if (text === '/start') {
+        await bot.sendMessage(msg.chat.id, 'Hello!')
+    }
+    // ... your bot logic
 }
 ```
 
 ### 2. Create `api/your-bot-name.ts`
 
 ```typescript
-import TelegramBot from "node-telegram-bot-api";
-import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { processMessage } from "../bots/your-bot-name.js";
+import TelegramBot from 'node-telegram-bot-api'
+import type {VercelRequest, VercelResponse} from '@vercel/node'
+import {processMessage} from '../bots/your-bot-name.js'
 
-const bot = new TelegramBot(process.env.YOUR_BOT_NAME_BOT_TOKEN!);
+const bot = new TelegramBot(process.env.YOUR_BOT_NAME_BOT_TOKEN!)
 
-export default async function handler(
-  req: VercelRequest,
-  res: VercelResponse,
-): Promise<void> {
-  if (req.method === "POST") {
-    try {
-      const update = req.body;
-      if (update.message) {
-        await processMessage(bot, update.message);
-      }
-      res.status(200).json({ ok: true });
-    } catch (error) {
-      console.error("Error processing update:", error);
-      res.status(500).json({ error: "Internal server error" });
+export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
+    if (req.method === 'POST') {
+        try {
+            const update = req.body
+            if (update.message) {
+                await processMessage(bot, update.message)
+            }
+            res.status(200).json({ok: true})
+        } catch (error) {
+            console.error('Error processing update:', error)
+            res.status(500).json({error: 'Internal server error'})
+        }
+    } else {
+        res.status(200).json({status: 'Your Bot is running!'})
     }
-  } else {
-    res.status(200).json({ status: "Your Bot is running!" });
-  }
 }
 ```
 
@@ -84,11 +78,11 @@ YOUR_BOT_NAME_BOT_TOKEN=your_token_here
 
 ```json
 {
-  "scripts": {
-    "dev:your-bot-name": "npm run dev your-bot-name",
-    "setup-webhook:your-bot-name": "npm run setup-webhook your-bot-name",
-    "setup-commands:your-bot-name": "npm run setup-commands your-bot-name"
-  }
+    "scripts": {
+        "dev:your-bot-name": "npm run dev your-bot-name",
+        "setup-webhook:your-bot-name": "npm run setup-webhook your-bot-name",
+        "setup-commands:your-bot-name": "npm run setup-commands your-bot-name"
+    }
 }
 ```
 
@@ -112,7 +106,8 @@ Then run it once to register them with Telegram:
 npm run setup-commands:your-bot-name
 ```
 
-This makes commands appear in the Telegram command menu (the `/` suggestions UI). Only needs to be re-run if commands change.
+This makes commands appear in the Telegram command menu (the `/` suggestions UI). Only needs to be
+re-run if commands change.
 
 ### 7. Test and deploy
 
@@ -175,8 +170,7 @@ Bot names are automatically converted to env variable names:
 
 ## Key Benefits
 
-✅ **Single source of truth**: Logic in `logic.ts` is used by both polling and webhook
-✅ **Easy local testing**: Run with polling mode locally
-✅ **Production ready**: Deploy webhooks to Vercel
-✅ **Independent bots**: Each bot is isolated, crash in one doesn't affect others
-✅ **Shared infrastructure**: One repository, one deployment, multiple bots
+✅ **Single source of truth**: Logic in `logic.ts` is used by both polling and webhook ✅ **Easy
+local testing**: Run with polling mode locally ✅ **Production ready**: Deploy webhooks to Vercel ✅
+**Independent bots**: Each bot is isolated, crash in one doesn't affect others ✅ **Shared
+infrastructure**: One repository, one deployment, multiple bots

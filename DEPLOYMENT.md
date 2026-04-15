@@ -64,7 +64,8 @@ vercel env add MOTUMBITO_BOT_TOKEN
 When prompted:
 
 - Enter the value: paste your bot token
-- Select environments: Choose **Production**, **Preview**, and **Development** (use space to select, enter to confirm)
+- Select environments: Choose **Production**, **Preview**, and **Development** (use space to select,
+  enter to confirm)
 
 ### 6. Deploy to Production
 
@@ -113,7 +114,7 @@ Visit your bot's endpoint in a browser:
 You should see:
 
 ```json
-{ "status": "Motumbito bot is running!" }
+{"status": "Motumbito bot is running!"}
 ```
 
 ### Check webhook status
@@ -128,21 +129,21 @@ curl https://api.telegram.org/bot<YOUR_BOT_TOKEN>/getWebhookInfo
 
 1. **Check webhook is set correctly:**
 
-   ```bash
-   npm run setup-webhook:motumbito https://your-app.vercel.app/api/motumbito
-   ```
+    ```bash
+    npm run setup-webhook:motumbito https://your-app.vercel.app/api/motumbito
+    ```
 
 2. **Check Vercel logs:**
 
-   ```bash
-   vercel logs
-   ```
+    ```bash
+    vercel logs
+    ```
 
 3. **Verify environment variables are set:**
-   - Go to https://vercel.com/dashboard
-   - Select your project
-   - Go to Settings → Environment Variables
-   - Ensure all bot tokens are set (e.g., `MOTUMBITO_BOT_TOKEN`)
+    - Go to https://vercel.com/dashboard
+    - Select your project
+    - Go to Settings → Environment Variables
+    - Ensure all bot tokens are set (e.g., `MOTUMBITO_BOT_TOKEN`)
 
 ### Need to update the bot code?
 
