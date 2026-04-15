@@ -1,4 +1,5 @@
 import TelegramBot, { Message } from "node-telegram-bot-api";
+import { isCommand } from "../lib/utils.js";
 
 // API Response type for a single currency rate
 interface CurrencyRate {
@@ -30,9 +31,7 @@ interface CacheEntry {
 const cache = new Map<string, CacheEntry>();
 const CACHE_TTL_MS = 3 * 60 * 1000; // 3 minutes
 
-function isCommand(text: string, command: string): boolean {
-  return text === command || text === `${command}@tipodecambio_bot`;
-}
+const BOT_USERNAME = "tipodecambio_bot";
 
 // Type guard to validate API response
 function isValidExchangeRateResponse(
@@ -208,7 +207,10 @@ export async function processMessage(
   const text = msg.text || "";
 
   try {
-    if (isCommand(text, "/start") || isCommand(text, "/help")) {
+    if (
+      isCommand(text, "/start", BOT_USERNAME) ||
+      isCommand(text, "/help", BOT_USERNAME)
+    ) {
       await bot.sendMessage(
         msg.chat.id,
         "🏦 *Bot de Tipo de Cambio*\n\nComandos disponibles:\n\n/usd [cantidad] - USD → PEN\n/eur [cantidad] - EUR → PEN\n/all [cantidad] - USD y EUR → PEN\n\n*Ejemplos:*\n/usd - Ver tipo de cambio\n/usd 5 - Convertir 5 USD a PEN",
