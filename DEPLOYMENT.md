@@ -55,7 +55,8 @@ This will create a preview deployment. You'll get a URL like: `https://telegram-
 
 ### 5. Add Environment Variable to Vercel
 
-Add your bot token as an environment variable:
+Add each bot's token as an environment variable. Each bot needs its own token, named
+`<NAME>_BOT_TOKEN` (see the naming rule in `BOT_SETUP.md`). For example:
 
 ```bash
 vercel env add MOTUMBITO_BOT_TOKEN
@@ -66,6 +67,9 @@ When prompted:
 - Enter the value: paste your bot token
 - Select environments: Choose **Production**, **Preview**, and **Development** (use space to select,
   enter to confirm)
+
+Environment variables only apply to deployments created after they are set, so add them all before
+the next step.
 
 ### 6. Deploy to Production
 
@@ -160,7 +164,7 @@ No need to set up the webhook again unless your URL changes.
 1. Push your code to GitHub
 2. Go to https://vercel.com/new
 3. Import your repository
-4. Add environment variable `MOTUMBITO_BOT_TOKEN` in project settings
+4. Add `<NAME>_BOT_TOKEN` for each bot (e.g. `MOTUMBITO_BOT_TOKEN`) in project settings
 5. Deploy
 6. Run the webhook setup script with your Vercel URL
 
