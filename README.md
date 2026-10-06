@@ -13,6 +13,7 @@ Multi-bot Telegram bot repository deployed on Vercel using webhooks.
 ## Bots
 
 - **Motumbito Bot** - A fun blessing bot
+- **Tipodecambio Bot** - USD and EUR to PEN exchange rates
 
 ## Project Structure
 

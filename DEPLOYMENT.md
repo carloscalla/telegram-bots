@@ -67,6 +67,14 @@ When prompted:
 - Select environments: Choose **Production**, **Preview**, and **Development** (use space to select,
   enter to confirm)
 
+Repeat for each bot's token. The Tipodecambio bot also needs `TIPODECAMBIO_BOT_TOKEN` and
+`AWESOMEAPI_KEY`:
+
+```bash
+vercel env add TIPODECAMBIO_BOT_TOKEN
+vercel env add AWESOMEAPI_KEY
+```
+
 ### 6. Deploy to Production
 
 ```bash
@@ -143,7 +151,8 @@ curl https://api.telegram.org/bot<YOUR_BOT_TOKEN>/getWebhookInfo
     - Go to https://vercel.com/dashboard
     - Select your project
     - Go to Settings → Environment Variables
-    - Ensure all bot tokens are set (e.g., `MOTUMBITO_BOT_TOKEN`)
+    - Ensure all bot tokens are set (e.g., `MOTUMBITO_BOT_TOKEN`, `TIPODECAMBIO_BOT_TOKEN`) and
+      `AWESOMEAPI_KEY` is set
 
 ### Need to update the bot code?
 
@@ -160,7 +169,8 @@ No need to set up the webhook again unless your URL changes.
 1. Push your code to GitHub
 2. Go to https://vercel.com/new
 3. Import your repository
-4. Add environment variable `MOTUMBITO_BOT_TOKEN` in project settings
+4. Add environment variables `MOTUMBITO_BOT_TOKEN`, `TIPODECAMBIO_BOT_TOKEN`, and `AWESOMEAPI_KEY`
+   in project settings
 5. Deploy
 6. Run the webhook setup script with your Vercel URL
 

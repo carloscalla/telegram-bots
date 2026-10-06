@@ -14,6 +14,6 @@
         "noEmit": true,
         "types": ["node"]
     },
-    "include": ["api/**/*", "scripts/**/*", "motumbito-bot.ts", "index.ts"],
+    "include": ["api/**/*", "scripts/**/*"],
     "exclude": ["node_modules", ".vercel"]
 }

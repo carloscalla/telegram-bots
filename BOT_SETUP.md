@@ -61,7 +61,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
 }
 ```
 
-### 5. Add environment variables
+### 3. Add environment variables
 
 **Local (.env file):**
 
@@ -74,7 +74,7 @@ YOUR_BOT_NAME_BOT_TOKEN=your_token_here
 - Go to Settings → Environment Variables
 - Add `YOUR_BOT_NAME_BOT_TOKEN` with your bot token
 
-### 6. Add npm scripts to package.json
+### 4. Add npm scripts to package.json
 
 ```json
 {
@@ -88,7 +88,7 @@ YOUR_BOT_NAME_BOT_TOKEN=your_token_here
 
 **Note:** The generic `npm run dev <bot-name>` script automatically handles polling for any bot!
 
-### 6b. Register bot commands in the Telegram app
+### 5. Register bot commands in the Telegram app
 
 Add your bot's commands to `scripts/setup-commands.ts` under `BOT_COMMANDS`:
 
@@ -109,7 +109,7 @@ npm run setup-commands:your-bot-name
 This makes commands appear in the Telegram command menu (the `/` suggestions UI). Only needs to be
 re-run if commands change.
 
-### 7. Test and deploy
+### 6. Test and deploy
 
 **Test locally:**
 
@@ -170,7 +170,7 @@ Bot names are automatically converted to env variable names:
 
 ## Key Benefits
 
-✅ **Single source of truth**: Logic in `logic.ts` is used by both polling and webhook ✅ **Easy
-local testing**: Run with polling mode locally ✅ **Production ready**: Deploy webhooks to Vercel ✅
-**Independent bots**: Each bot is isolated, crash in one doesn't affect others ✅ **Shared
+✅ **Single source of truth**: Logic in `bots/<name>.ts` is used by both polling and webhook ✅
+**Easy local testing**: Run with polling mode locally ✅ **Production ready**: Deploy webhooks to
+Vercel ✅ **Independent bots**: Each bot is isolated, crash in one doesn't affect others ✅ **Shared
 infrastructure**: One repository, one deployment, multiple bots
