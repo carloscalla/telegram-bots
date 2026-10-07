@@ -1,5 +1,5 @@
 import TelegramBot from 'node-telegram-bot-api'
-import {getBotTokenEnvVar} from './utils.js'
+import {getBotTokenEnvVar} from '../lib/utils.js'
 
 // This script sets up the webhook URL with Telegram
 // Run it once after deploying to Vercel

@@ -1,5 +1,11 @@
 import type TelegramBot from 'node-telegram-bot-api'
 
+// Converts a bot name to its token env variable name
+// e.g. "motumbito" -> "MOTUMBITO_BOT_TOKEN", "my-bot" -> "MY_BOT_BOT_TOKEN"
+export function getBotTokenEnvVar(botName: string): string {
+    return `${botName.toUpperCase().replace(/-/g, '_')}_BOT_TOKEN`
+}
+
 // Checks if a message text matches a given command.
 // Handles both "/cmd" and "/cmd@botusername" formats (for group chats).
 export function isCommand(text: string, command: string, botUsername: string): boolean {

@@ -1,6 +1,6 @@
 import TelegramBot from 'node-telegram-bot-api'
 import {resolve} from 'path'
-import {getBotTokenEnvVar} from './utils.js'
+import {getBotTokenEnvVar} from '../lib/utils.js'
 
 /**
  * Generic polling bot starter

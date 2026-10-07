@@ -1,5 +1,5 @@
 import TelegramBot from 'node-telegram-bot-api'
-import {getBotTokenEnvVar} from './utils.js'
+import {getBotTokenEnvVar} from '../lib/utils.js'
 
 // This script registers the bot command list shown in the Telegram app
 // Run it once per bot after adding or changing commands
