@@ -1,5 +1,5 @@
 import TelegramBot, {Message} from 'node-telegram-bot-api'
-import {isCommand} from '../lib/utils.js'
+import {getBotUsername, isCommand} from '../lib/utils.js'
 
 // API Response type for a single currency rate
 interface CurrencyRate {
@@ -34,8 +34,6 @@ interface CacheEntry {
 // best-effort rate-limit mitigation, not a cross-instance guarantee.
 const cache = new Map<string, CacheEntry>()
 const CACHE_TTL_MS = 3 * 60 * 1000 // 3 minutes
-
-const BOT_USERNAME = 'tipodecambio_bot'
 
 // Type guard to validate API response
 function isValidExchangeRateResponse(data: unknown): data is ExchangeRateResponse {
@@ -203,27 +201,29 @@ export async function processMessage(bot: TelegramBot, msg: Message): Promise<vo
     const [commandToken, amountArg] = text.split(/\s+/)
 
     try {
-        if (isCommand(text, '/start', BOT_USERNAME) || isCommand(text, '/help', BOT_USERNAME)) {
+        const botUsername = await getBotUsername(bot)
+
+        if (isCommand(text, '/start', botUsername) || isCommand(text, '/help', botUsername)) {
             await bot.sendMessage(
                 msg.chat.id,
                 '🏦 *Bot de Tipo de Cambio*\n\nComandos disponibles:\n\n/usd [cantidad] - USD → PEN\n/eur [cantidad] - EUR → PEN\n/all [cantidad] - USD y EUR → PEN\n\n*Ejemplos:*\n/usd - Ver tipo de cambio\n/usd 5 - Convertir 5 USD a PEN',
                 {parse_mode: 'Markdown'},
             )
-        } else if (isCommand(commandToken, '/usd', BOT_USERNAME)) {
+        } else if (isCommand(commandToken, '/usd', botUsername)) {
             const amount = parseAmountArg(amountArg)
 
             const rateMessage = await getExchangeRate(['USD-PEN'], amount)
             await bot.sendMessage(msg.chat.id, rateMessage, {
                 parse_mode: 'Markdown',
             })
-        } else if (isCommand(commandToken, '/eur', BOT_USERNAME)) {
+        } else if (isCommand(commandToken, '/eur', botUsername)) {
             const amount = parseAmountArg(amountArg)
 
             const rateMessage = await getExchangeRate(['EUR-PEN'], amount)
             await bot.sendMessage(msg.chat.id, rateMessage, {
                 parse_mode: 'Markdown',
             })
-        } else if (isCommand(commandToken, '/all', BOT_USERNAME)) {
+        } else if (isCommand(commandToken, '/all', botUsername)) {
             const amount = parseAmountArg(amountArg)
 
             const rateMessage = await getExchangeRate(['USD-PEN', 'EUR-PEN'], amount)

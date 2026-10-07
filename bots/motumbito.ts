@@ -1,5 +1,5 @@
 import TelegramBot, {Message} from 'node-telegram-bot-api'
-import {isCommand} from '../lib/utils.js'
+import {getBotUsername, isCommand} from '../lib/utils.js'
 
 // Bot data
 export const bendiciones: string[] = [
@@ -38,23 +38,22 @@ function getRnd(max: number): number {
     return Math.floor(Math.random() * max)
 }
 
-const BOT_USERNAME = 'motumbito_bot'
-
 // Main bot logic - works for both polling and webhook modes
 export async function processMessage(bot: TelegramBot, msg: Message): Promise<void> {
     const text = msg.text || ''
+    const botUsername = await getBotUsername(bot)
 
-    if (isCommand(text, '/start', BOT_USERNAME) || isCommand(text, '/help', BOT_USERNAME)) {
+    if (isCommand(text, '/start', botUsername) || isCommand(text, '/help', botUsername)) {
         await bot.sendMessage(
             msg.chat.id,
             'Este es el bot del tio Motumbito, su único comando es /bendiceme',
         )
-    } else if (isCommand(text, '/commands', BOT_USERNAME)) {
+    } else if (isCommand(text, '/commands', botUsername)) {
         await bot.sendMessage(
             msg.chat.id,
             'Solo hay un comando:\n\n/bendiceme - si tienes suerte, recibirás la bendición del tio Motumbito.',
         )
-    } else if (isCommand(text, '/bendiceme', BOT_USERNAME)) {
+    } else if (isCommand(text, '/bendiceme', botUsername)) {
         await bot.sendMessage(
             msg.chat.id,
             t(bendiciones[getRnd(bendiciones.length)], {
