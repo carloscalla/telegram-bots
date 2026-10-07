@@ -31,7 +31,7 @@ const logicPath = resolve(process.cwd(), `bots/${botName}.js`)
 
 ;(async () => {
     try {
-        const {processMessage} = await import(logicPath)
+        const {processMessage, processCallbackQuery} = await import(logicPath)
 
         // Create bot with polling enabled
         const bot = new TelegramBot(token, {
@@ -46,6 +46,17 @@ const logicPath = resolve(process.cwd(), `bots/${botName}.js`)
                 console.error('Error processing message:', error)
             }
         })
+
+        // Listen for callback queries (inline keyboard taps), if the bot exports a handler
+        if (typeof processCallbackQuery === 'function') {
+            bot.on('callback_query', async (query) => {
+                try {
+                    await processCallbackQuery(bot, query)
+                } catch (error) {
+                    console.error('Error processing callback query:', error)
+                }
+            })
+        }
 
         console.log(`🤖 ${botName} bot is running in polling mode (local dev)...`)
         console.log(`📍 Logic file: bots/${botName}.ts`)

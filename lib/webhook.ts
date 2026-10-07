@@ -3,11 +3,20 @@ import type {VercelRequest, VercelResponse} from '@vercel/node'
 import {getBotTokenEnvVar} from './utils.js'
 
 type ProcessMessage = (bot: TelegramBot, msg: Message) => Promise<void>
+type ProcessCallbackQuery = (bot: TelegramBot, query: TelegramBot.CallbackQuery) => Promise<void>
 
 // Builds a Vercel serverless handler for a bot. The TelegramBot instance
 // (and its token lookup) is created once, at module load time, and reused
 // across invocations on the same warm serverless instance.
-export function createWebhookHandler(botName: string, processMessage: ProcessMessage) {
+//
+// processCallbackQuery is optional: a bot module only needs to export it
+// (and pass it here) if it uses inline keyboards. Bots that don't are
+// unaffected.
+export function createWebhookHandler(
+    botName: string,
+    processMessage: ProcessMessage,
+    processCallbackQuery?: ProcessCallbackQuery,
+) {
     const envVarName = getBotTokenEnvVar(botName)
     const token = process.env[envVarName]
 
@@ -26,6 +35,8 @@ export function createWebhookHandler(botName: string, processMessage: ProcessMes
                 // Process the message if it exists
                 if (update.message) {
                     await processMessage(bot, update.message)
+                } else if (update.callback_query && processCallbackQuery) {
+                    await processCallbackQuery(bot, update.callback_query)
                 }
 
                 // Respond to Telegram that we received the update
