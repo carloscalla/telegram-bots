@@ -28,6 +28,10 @@ interface CacheEntry {
     timestamp: number
 }
 
+// NOTE: this cache lives in the process's memory only. On Vercel each
+// serverless instance gets its own cache, cold starts reset it to empty, and
+// concurrent instances never share entries. The 3-minute TTL is therefore
+// best-effort rate-limit mitigation, not a cross-instance guarantee.
 const cache = new Map<string, CacheEntry>()
 const CACHE_TTL_MS = 3 * 60 * 1000 // 3 minutes
 
