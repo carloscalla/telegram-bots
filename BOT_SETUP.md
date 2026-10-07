@@ -34,31 +34,26 @@ export async function processMessage(bot: TelegramBot, msg: Message): Promise<vo
 }
 ```
 
+**Optional:** if your bot uses inline keyboards, also export `processCallbackQuery(bot, query)` from
+this file. Both polling (`scripts/start-polling.ts`) and the webhook handler (step 2) pick it up
+automatically; a bot that only exports `processMessage` is unaffected.
+
 ### 2. Create `api/your-bot-name.ts`
 
+`lib/webhook.ts` already implements the Vercel handler boilerplate (token lookup, POST/GET handling,
+error responses), so this file only wires your bot's logic into it:
+
 ```typescript
-import TelegramBot from 'node-telegram-bot-api'
-import type {VercelRequest, VercelResponse} from '@vercel/node'
+import {createWebhookHandler} from '../lib/webhook.js'
 import {processMessage} from '../bots/your-bot-name.js'
 
-const bot = new TelegramBot(process.env.YOUR_BOT_NAME_BOT_TOKEN!)
+export default createWebhookHandler('your-bot-name', processMessage)
+```
 
-export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
-    if (req.method === 'POST') {
-        try {
-            const update = req.body
-            if (update.message) {
-                await processMessage(bot, update.message)
-            }
-            res.status(200).json({ok: true})
-        } catch (error) {
-            console.error('Error processing update:', error)
-            res.status(500).json({error: 'Internal server error'})
-        }
-    } else {
-        res.status(200).json({status: 'Your Bot is running!'})
-    }
-}
+If you also exported `processCallbackQuery` in step 1, pass it as a third argument:
+
+```typescript
+export default createWebhookHandler('your-bot-name', processMessage, processCallbackQuery)
 ```
 
 ### 3. Add environment variables
