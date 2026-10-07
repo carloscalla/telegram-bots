@@ -40,7 +40,11 @@ const logicPath = resolve(process.cwd(), `bots/${botName}.js`)
 
         // Listen for all messages
         bot.on('message', async (msg) => {
-            await processMessage(bot, msg)
+            try {
+                await processMessage(bot, msg)
+            } catch (error) {
+                console.error('Error processing message:', error)
+            }
         })
 
         console.log(`🤖 ${botName} bot is running in polling mode (local dev)...`)
