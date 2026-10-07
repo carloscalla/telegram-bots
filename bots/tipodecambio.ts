@@ -68,6 +68,12 @@ function truncate3(value: number): string {
     return (Math.floor(value * 1000) / 1000).toFixed(3)
 }
 
+// Parses a trailing numeric amount argument like "5" or "5.5"; returns
+// undefined for a missing or non-numeric argument.
+function parseAmountArg(arg: string | undefined): number | undefined {
+    return arg !== undefined && /^\d+(?:\.\d+)?$/.test(arg) ? parseFloat(arg) : undefined
+}
+
 // Helper to format a single currency rate
 function formatRate(rate: CurrencyRate, symbol: string, name: string, amount?: number): string {
     const bid = parseFloat(rate.bid)
@@ -194,6 +200,7 @@ async function getExchangeRate(currencies: string[], amount?: number): Promise<s
 
 export async function processMessage(bot: TelegramBot, msg: Message): Promise<void> {
     const text = msg.text || ''
+    const [commandToken, amountArg] = text.split(/\s+/)
 
     try {
         if (isCommand(text, '/start', BOT_USERNAME) || isCommand(text, '/help', BOT_USERNAME)) {
@@ -202,28 +209,22 @@ export async function processMessage(bot: TelegramBot, msg: Message): Promise<vo
                 '🏦 *Bot de Tipo de Cambio*\n\nComandos disponibles:\n\n/usd [cantidad] - USD → PEN\n/eur [cantidad] - EUR → PEN\n/all [cantidad] - USD y EUR → PEN\n\n*Ejemplos:*\n/usd - Ver tipo de cambio\n/usd 5 - Convertir 5 USD a PEN',
                 {parse_mode: 'Markdown'},
             )
-        } else if (text.startsWith('/usd')) {
-            // Extract amount if provided: /usd 5 or /usd@botname 5
-            const match = text.match(/^\/usd(?:@\w+)?\s+(\d+(?:\.\d+)?)/)
-            const amount = match ? parseFloat(match[1]) : undefined
+        } else if (isCommand(commandToken, '/usd', BOT_USERNAME)) {
+            const amount = parseAmountArg(amountArg)
 
             const rateMessage = await getExchangeRate(['USD-PEN'], amount)
             await bot.sendMessage(msg.chat.id, rateMessage, {
                 parse_mode: 'Markdown',
             })
-        } else if (text.startsWith('/eur')) {
-            // Extract amount if provided
-            const match = text.match(/^\/eur(?:@\w+)?\s+(\d+(?:\.\d+)?)/)
-            const amount = match ? parseFloat(match[1]) : undefined
+        } else if (isCommand(commandToken, '/eur', BOT_USERNAME)) {
+            const amount = parseAmountArg(amountArg)
 
             const rateMessage = await getExchangeRate(['EUR-PEN'], amount)
             await bot.sendMessage(msg.chat.id, rateMessage, {
                 parse_mode: 'Markdown',
             })
-        } else if (text.startsWith('/all')) {
-            // Extract amount if provided
-            const match = text.match(/^\/all(?:@\w+)?\s+(\d+(?:\.\d+)?)/)
-            const amount = match ? parseFloat(match[1]) : undefined
+        } else if (isCommand(commandToken, '/all', BOT_USERNAME)) {
+            const amount = parseAmountArg(amountArg)
 
             const rateMessage = await getExchangeRate(['USD-PEN', 'EUR-PEN'], amount)
             await bot.sendMessage(msg.chat.id, rateMessage, {
